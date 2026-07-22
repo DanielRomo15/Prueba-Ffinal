@@ -1,11 +1,11 @@
-class Habitacion {
-  final int? id;
-  final String numero;
-  final String tipo;
-  final double precio;
-  final String estado;
+class HabitacionModel {
+  int? id;
+  String numero;
+  String tipo;
+  double precio;
+  String estado;
 
-  Habitacion({
+  HabitacionModel({
     this.id,
     required this.numero,
     required this.tipo,
@@ -13,42 +13,25 @@ class Habitacion {
     required this.estado,
   });
 
-  // Convertir objeto a JSON
-  Map<String, dynamic> toJson() {
+  // Transformar un objeto a un map
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'numero': numero,
-      'tipo': tipo,
-      'precio': precio,
-      'estado': estado,
+      "id": id,
+      "numero": numero,
+      "tipo": tipo,
+      "precio": precio,
+      "estado": estado,
     };
   }
 
-  // Convertir JSON a objeto
-  factory Habitacion.fromJson(Map<String, dynamic> json) {
-    return Habitacion(
-      id: json['id'],
-      numero: json['numero'],
-      tipo: json['tipo'],
-      precio: double.parse(json['precio'].toString()),
-      estado: json['estado'],
-    );
-  }
-
-  // Crear una copia modificando algunos campos
-  Habitacion copyWith({
-    int? id,
-    String? numero,
-    String? tipo,
-    double? precio,
-    String? estado,
-  }) {
-    return Habitacion(
-      id: id ?? this.id,
-      numero: numero ?? this.numero,
-      tipo: tipo ?? this.tipo,
-      precio: precio ?? this.precio,
-      estado: estado ?? this.estado,
+  // Transformar un map a un objeto
+  factory HabitacionModel.fromMap(Map<String, dynamic> data) {
+    return HabitacionModel(
+      id: data["id"],
+      numero: data["numero"],
+      tipo: data["tipo"],
+      precio: data["precio"],
+      estado: data["estado"],
     );
   }
 }
