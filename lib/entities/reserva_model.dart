@@ -13,7 +13,6 @@ class ReservaModel {
     required this.fechaFin,
   });
 
-  // TRANSFORMAR UN OBJETO EN UN MAP
   Map<String, dynamic> toMap() {
     return {
       "id": id,
@@ -24,7 +23,6 @@ class ReservaModel {
     };
   }
 
-  // TRANSFORMAR DE MAP A OBJETO
   factory ReservaModel.fromMap(Map<String, dynamic> data) {
     return ReservaModel(
       id: data["id"],

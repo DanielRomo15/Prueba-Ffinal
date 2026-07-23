@@ -1,39 +1,41 @@
 import 'package:flutter/material.dart';
 
-import '../../entities/pago_model.dart';
-import '../../repositories/pago_repository.dart';
+import '../../entities/habitacion_model.dart';
+import '../../repositories/habitacion_repository.dart';
 
-class PagoListaScreen extends StatefulWidget {
+class HabitacionListaScreen extends StatefulWidget {
   @override
-  State<PagoListaScreen> createState() {
-    return _PagoListaScreenState();
+  State<HabitacionListaScreen> createState() {
+    return _HabitacionListaScreenState();
   }
 }
 
-class _PagoListaScreenState extends State<PagoListaScreen> {
-  final repo = PagoRepository();
-  List<PagoModel> pagos = [];
+class _HabitacionListaScreenState extends State<HabitacionListaScreen> {
+  final repo = HabitacionRepository();
+  List<HabitacionModel> habitaciones = [];
 
   @override
   void initState() {
     super.initState();
-    cargarPagos();
+    cargarHabitaciones();
   }
 
-  Future<void> cargarPagos() async {
-    pagos = await repo.getAll();
+  Future<void> cargarHabitaciones() async {
+    habitaciones = await repo.getAll();
 
     if (!mounted) return;
     setState(() {});
   }
 
-  Future<void> eliminarPago(PagoModel pago) async {
+  Future<void> eliminarHabitacion(HabitacionModel habitacion) async {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text("Confirmar eliminación"),
-          content: Text("¿Desea eliminar el pago ${pago.id}?"),
+          content: Text(
+            "¿Desea eliminar la habitación ${habitacion.numero}?",
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -53,8 +55,8 @@ class _PagoListaScreenState extends State<PagoListaScreen> {
     );
 
     if (confirmar == true) {
-      await repo.delete(pago.id!);
-      await cargarPagos();
+      await repo.delete(habitacion.id!);
+      await cargarHabitaciones();
     }
   }
 
@@ -62,26 +64,25 @@ class _PagoListaScreenState extends State<PagoListaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Lista de pagos"),
+        title: Text("Lista de habitaciones"),
       ),
-      body: pagos.isEmpty
+      body: habitaciones.isEmpty
           ? Center(child: Text("No existen datos"))
           : ListView.builder(
-              itemCount: pagos.length,
+              itemCount: habitaciones.length,
               itemBuilder: (context, index) {
-                final pago = pagos[index];
+                final habitacion = habitaciones[index];
 
                 return Card(
                   child: ListTile(
                     leading: CircleAvatar(
-                      child: Text(pago.id.toString()),
+                      child: Text(habitacion.id.toString()),
                     ),
-                    title: Text("Pago ${pago.id}"),
+                    title: Text("Habitación ${habitacion.numero}"),
                     subtitle: Text(
-                      "Reserva: ${pago.reservaId}\n"
-                      "Método: ${pago.metodoPago}\n"
-                      "Monto: \$${pago.monto.toStringAsFixed(2)}\n"
-                      "Fecha: ${pago.fecha}",
+                      "Tipo: ${habitacion.tipo}\n"
+                      "Precio: \$${habitacion.precio.toStringAsFixed(2)}\n"
+                      "Estado: ${habitacion.estado}",
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -90,16 +91,16 @@ class _PagoListaScreenState extends State<PagoListaScreen> {
                           onPressed: () async {
                             await Navigator.pushNamed(
                               context,
-                              "/pago/form",
-                              arguments: pago,
+                              "/habitacion/form",
+                              arguments: habitacion,
                             );
-                            cargarPagos();
+                            cargarHabitaciones();
                           },
                           icon: Icon(Icons.edit, color: Colors.blue),
                         ),
                         IconButton(
                           onPressed: () {
-                            eliminarPago(pago);
+                            eliminarHabitacion(habitacion);
                           },
                           icon: Icon(Icons.delete, color: Colors.red),
                         ),
@@ -111,8 +112,8 @@ class _PagoListaScreenState extends State<PagoListaScreen> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.pushNamed(context, "/pago/form");
-          cargarPagos();
+          await Navigator.pushNamed(context, "/habitacion/form");
+          cargarHabitaciones();
         },
         child: Icon(Icons.add),
       ),

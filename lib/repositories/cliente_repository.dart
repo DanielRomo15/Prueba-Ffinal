@@ -1,15 +1,15 @@
-import '../entities/pago_model.dart';
+import '../entities/cliente_model.dart';
 import '../settings/db_connection.dart';
 
-class PagoRepository {
-  final String tableName = "pagos";
+class ClienteRepository {
+  final String tableName = "clientes";
   final DbConnection db = DbConnection();
 
-  Future<int> insert(PagoModel data) async {
+  Future<int> insert(ClienteModel data) async {
     return await db.insert(tableName, data.toMap());
   }
 
-  Future<int> update(PagoModel data) async {
+  Future<int> update(ClienteModel data) async {
     return await db.update(tableName, data.toMap(), data.id!);
   }
 
@@ -17,8 +17,8 @@ class PagoRepository {
     return await db.delete(tableName, id);
   }
 
-  Future<List<PagoModel>> getAll() async {
+  Future<List<ClienteModel>> getAll() async {
     final data = await db.getAll(tableName);
-    return data.map((i) => PagoModel.fromMap(i)).toList();
+    return data.map((i) => ClienteModel.fromMap(i)).toList();
   }
 }

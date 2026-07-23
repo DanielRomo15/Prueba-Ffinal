@@ -13,7 +13,6 @@ class PagoModel {
     required this.fecha,
   });
 
-  // TRANSFORMAR UN OBJETO EN UN MAP
   Map<String, dynamic> toMap() {
     return {
       "id": id,
@@ -24,7 +23,6 @@ class PagoModel {
     };
   }
 
-  // TRANSFORMAR DE MAP A OBJETO
   factory PagoModel.fromMap(Map<String, dynamic> data) {
     return PagoModel(
       id: data["id"],

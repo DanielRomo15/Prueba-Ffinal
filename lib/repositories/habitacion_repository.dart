@@ -1,9 +1,9 @@
-import 'package:prueba-ffinal-1/entities/habitacion.dart';
-import 'package:prueba-ffinal-1/repositories/db_connection.dart';
+import '../entities/habitacion_model.dart';
+import '../settings/db_connection.dart';
 
 class HabitacionRepository {
   final String tableName = "habitaciones";
-  final DBConnection db = DBConnection();
+  final DbConnection db = DbConnection();
 
   Future<int> insert(HabitacionModel data) async {
     return await db.insert(tableName, data.toMap());
@@ -19,7 +19,6 @@ class HabitacionRepository {
 
   Future<List<HabitacionModel>> getAll() async {
     final data = await db.getAll(tableName);
-
     return data.map((i) => HabitacionModel.fromMap(i)).toList();
   }
 }

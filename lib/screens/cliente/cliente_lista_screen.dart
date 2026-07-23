@@ -1,39 +1,39 @@
 import 'package:flutter/material.dart';
 
-import '../../entities/pago_model.dart';
-import '../../repositories/pago_repository.dart';
+import '../../entities/cliente_model.dart';
+import '../../repositories/cliente_repository.dart';
 
-class PagoListaScreen extends StatefulWidget {
+class ClienteListaScreen extends StatefulWidget {
   @override
-  State<PagoListaScreen> createState() {
-    return _PagoListaScreenState();
+  State<ClienteListaScreen> createState() {
+    return _ClienteListaScreenState();
   }
 }
 
-class _PagoListaScreenState extends State<PagoListaScreen> {
-  final repo = PagoRepository();
-  List<PagoModel> pagos = [];
+class _ClienteListaScreenState extends State<ClienteListaScreen> {
+  final repo = ClienteRepository();
+  List<ClienteModel> clientes = [];
 
   @override
   void initState() {
     super.initState();
-    cargarPagos();
+    cargarClientes();
   }
 
-  Future<void> cargarPagos() async {
-    pagos = await repo.getAll();
+  Future<void> cargarClientes() async {
+    clientes = await repo.getAll();
 
     if (!mounted) return;
     setState(() {});
   }
 
-  Future<void> eliminarPago(PagoModel pago) async {
+  Future<void> eliminarCliente(ClienteModel cliente) async {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text("Confirmar eliminación"),
-          content: Text("¿Desea eliminar el pago ${pago.id}?"),
+          content: Text("¿Desea eliminar a ${cliente.nombre}?"),
           actions: [
             TextButton(
               onPressed: () {
@@ -53,8 +53,8 @@ class _PagoListaScreenState extends State<PagoListaScreen> {
     );
 
     if (confirmar == true) {
-      await repo.delete(pago.id!);
-      await cargarPagos();
+      await repo.delete(cliente.id!);
+      await cargarClientes();
     }
   }
 
@@ -62,26 +62,25 @@ class _PagoListaScreenState extends State<PagoListaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Lista de pagos"),
+        title: Text("Lista de clientes"),
       ),
-      body: pagos.isEmpty
+      body: clientes.isEmpty
           ? Center(child: Text("No existen datos"))
           : ListView.builder(
-              itemCount: pagos.length,
+              itemCount: clientes.length,
               itemBuilder: (context, index) {
-                final pago = pagos[index];
+                final cliente = clientes[index];
 
                 return Card(
                   child: ListTile(
                     leading: CircleAvatar(
-                      child: Text(pago.id.toString()),
+                      child: Text(cliente.id.toString()),
                     ),
-                    title: Text("Pago ${pago.id}"),
+                    title: Text(cliente.nombre),
                     subtitle: Text(
-                      "Reserva: ${pago.reservaId}\n"
-                      "Método: ${pago.metodoPago}\n"
-                      "Monto: \$${pago.monto.toStringAsFixed(2)}\n"
-                      "Fecha: ${pago.fecha}",
+                      "Teléfono: ${cliente.telefono}\n"
+                      "Correo: ${cliente.correo}\n"
+                      "Documento: ${cliente.documento}",
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -90,16 +89,16 @@ class _PagoListaScreenState extends State<PagoListaScreen> {
                           onPressed: () async {
                             await Navigator.pushNamed(
                               context,
-                              "/pago/form",
-                              arguments: pago,
+                              "/cliente/form",
+                              arguments: cliente,
                             );
-                            cargarPagos();
+                            cargarClientes();
                           },
                           icon: Icon(Icons.edit, color: Colors.blue),
                         ),
                         IconButton(
                           onPressed: () {
-                            eliminarPago(pago);
+                            eliminarCliente(cliente);
                           },
                           icon: Icon(Icons.delete, color: Colors.red),
                         ),
@@ -111,8 +110,8 @@ class _PagoListaScreenState extends State<PagoListaScreen> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.pushNamed(context, "/pago/form");
-          cargarPagos();
+          await Navigator.pushNamed(context, "/cliente/form");
+          cargarClientes();
         },
         child: Icon(Icons.add),
       ),

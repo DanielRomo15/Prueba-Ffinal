@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:pueba-ffinal-1/entities/habitacion_model.dart';
-import '../../../repositories/habitacion_repository.dart';
+
+import '../../entities/habitacion_model.dart';
+import '../../repositories/habitacion_repository.dart';
 
 class HabitacionFormScreen extends StatefulWidget {
   final HabitacionModel? habitacion;
 
-  const HabitacionFormScreen({
+  HabitacionFormScreen({
     super.key,
     this.habitacion,
   });
 
   @override
-  State<HabitacionFormScreen> createState() =>
-      _HabitacionFormScreenState();
+  State<HabitacionFormScreen> createState() {
+    return _HabitacionFormScreenState();
+  }
 }
 
-class _HabitacionFormScreenState
-    extends State<HabitacionFormScreen> {
+class _HabitacionFormScreenState extends State<HabitacionFormScreen> {
   final numeroController = TextEditingController();
   final tipoController = TextEditingController();
   final precioController = TextEditingController();
@@ -27,102 +28,77 @@ class _HabitacionFormScreenState
     super.initState();
 
     if (widget.habitacion != null) {
-      numeroController.text =
-          widget.habitacion!.numero;
-
-      tipoController.text =
-          widget.habitacion!.tipo;
-
-      precioController.text =
-          widget.habitacion!.precio.toString();
-
-      estadoController.text =
-          widget.habitacion!.estado;
+      numeroController.text = widget.habitacion!.numero;
+      tipoController.text = widget.habitacion!.tipo;
+      precioController.text = widget.habitacion!.precio.toString();
+      estadoController.text = widget.habitacion!.estado;
     }
   }
 
   Future<void> guardar() async {
+    if (numeroController.text.isEmpty ||
+        tipoController.text.isEmpty ||
+        precioController.text.isEmpty ||
+        estadoController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Complete todos los campos")),
+      );
+      return;
+    }
+
     HabitacionModel habitacion = HabitacionModel(
       numero: numeroController.text,
       tipo: tipoController.text,
-      precio: double.parse(precioController.text),
+      precio: double.tryParse(precioController.text) ?? 0,
       estado: estadoController.text,
     );
 
-    final habitacionRepository =
-        HabitacionRepository();
+    final habitacionRepository = HabitacionRepository();
 
     if (widget.habitacion == null) {
       await habitacionRepository.insert(habitacion);
     } else {
       habitacion.id = widget.habitacion!.id;
-
       await habitacionRepository.update(habitacion);
     }
 
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final esEdicion =
-        widget.habitacion != null;
+    final esEdicion = widget.habitacion != null;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          esEdicion
-              ? "Editar Habitación"
-              : "Nueva Habitación",
-        ),
+        title: Text(esEdicion ? "Editar habitación" : "Nueva habitación"),
       ),
-
-      body: Center(
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(20),
         child: Column(
           children: [
-            TextFormField(
+            TextField(
               controller: numeroController,
-
-              decoration: const InputDecoration(
-                labelText: "Número",
-              ),
+              decoration: InputDecoration(labelText: "Número"),
             ),
-
-            TextFormField(
+            TextField(
               controller: tipoController,
-
-              decoration: const InputDecoration(
-                labelText: "Tipo",
-              ),
+              decoration: InputDecoration(labelText: "Tipo"),
             ),
-
-            TextFormField(
+            TextField(
               controller: precioController,
-
-              keyboardType:
-                  const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-
-              decoration: const InputDecoration(
-                labelText: "Precio",
-              ),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(labelText: "Precio"),
             ),
-
-            TextFormField(
+            TextField(
               controller: estadoController,
-
-              decoration: const InputDecoration(
-                labelText: "Estado",
-              ),
+              decoration: InputDecoration(labelText: "Estado"),
             ),
-
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: guardar,
-
-              child: const Text(
-                "Guardar",
-              ),
+              child: Text(esEdicion ? "Actualizar" : "Guardar"),
             ),
           ],
         ),

@@ -4,17 +4,14 @@ import '../../entities/reserva_model.dart';
 import '../../repositories/reserva_repository.dart';
 
 class ReservaListaScreen extends StatefulWidget {
-  const ReservaListaScreen({super.key});
-
   @override
-  State<ReservaListaScreen> createState() =>
-      _ReservaListaScreenState();
+  State<ReservaListaScreen> createState() {
+    return _ReservaListaScreenState();
+  }
 }
 
-class _ReservaListaScreenState
-    extends State<ReservaListaScreen> {
+class _ReservaListaScreenState extends State<ReservaListaScreen> {
   final repo = ReservaRepository();
-
   List<ReservaModel> reservas = [];
 
   @override
@@ -27,35 +24,28 @@ class _ReservaListaScreenState
     reservas = await repo.getAll();
 
     if (!mounted) return;
-
     setState(() {});
   }
 
-  Future<void> eliminarReserva(
-    ReservaModel reserva,
-  ) async {
+  Future<void> eliminarReserva(ReservaModel reserva) async {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
-            "Confirmar eliminación",
-          ),
-          content: Text(
-            "¿Desea realmente eliminar la reserva ${reserva.id}?",
-          ),
+          title: Text("Confirmar eliminación"),
+          content: Text("¿Desea eliminar la reserva ${reserva.id}?"),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: const Text("Aceptar"),
-            ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              child: const Text("Cancelar"),
+              child: Text("Cancelar"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Text("Aceptar"),
             ),
           ],
         );
@@ -64,18 +54,7 @@ class _ReservaListaScreenState
 
     if (confirmar == true) {
       await repo.delete(reserva.id!);
-
       await cargarReservas();
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "La reserva ${reserva.id} ha sido eliminada",
-          ),
-        ),
-      );
     }
   }
 
@@ -83,16 +62,10 @@ class _ReservaListaScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Lista de reservas",
-        ),
+        title: Text("Lista de reservas"),
       ),
       body: reservas.isEmpty
-          ? const Center(
-              child: Text(
-                "No existen datos",
-              ),
-            )
+          ? Center(child: Text("No existen datos"))
           : ListView.builder(
               itemCount: reservas.length,
               itemBuilder: (context, index) {
@@ -101,23 +74,17 @@ class _ReservaListaScreenState
                 return Card(
                   child: ListTile(
                     leading: CircleAvatar(
-                      child: Text(
-                        reserva.id.toString(),
-                      ),
+                      child: Text(reserva.id.toString()),
                     ),
-                    title: Text(
-                      "Reserva número ${reserva.id}",
-                    ),
+                    title: Text("Reserva ${reserva.id}"),
                     subtitle: Text(
                       "Cliente: ${reserva.clienteId}\n"
                       "Habitación: ${reserva.habitacionId}\n"
                       "Inicio: ${reserva.fechaInicio}\n"
                       "Fin: ${reserva.fechaFin}",
                     ),
-                    isThreeLine: true,
                     trailing: Row(
-                      mainAxisSize:
-                          MainAxisSize.min,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
                           onPressed: () async {
@@ -126,22 +93,15 @@ class _ReservaListaScreenState
                               "/reserva/form",
                               arguments: reserva,
                             );
-
                             cargarReservas();
                           },
-                          icon: const Icon(
-                            Icons.edit,
-                            color: Colors.blue,
-                          ),
+                          icon: Icon(Icons.edit, color: Colors.blue),
                         ),
                         IconButton(
                           onPressed: () {
                             eliminarReserva(reserva);
                           },
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
+                          icon: Icon(Icons.delete, color: Colors.red),
                         ),
                       ],
                     ),
@@ -149,17 +109,12 @@ class _ReservaListaScreenState
                 );
               },
             ),
-      floatingActionButton:
-          FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.pushNamed(
-            context,
-            "/reserva/form",
-          );
-
+          await Navigator.pushNamed(context, "/reserva/form");
           cargarReservas();
         },
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
       ),
     );
   }

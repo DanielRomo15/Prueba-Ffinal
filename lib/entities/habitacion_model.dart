@@ -13,7 +13,6 @@ class HabitacionModel {
     required this.estado,
   });
 
-  // Transformar un objeto a un map
   Map<String, dynamic> toMap() {
     return {
       "id": id,
@@ -24,13 +23,12 @@ class HabitacionModel {
     };
   }
 
-  // Transformar un map a un objeto
   factory HabitacionModel.fromMap(Map<String, dynamic> data) {
     return HabitacionModel(
       id: data["id"],
       numero: data["numero"],
       tipo: data["tipo"],
-      precio: data["precio"],
+      precio: (data["precio"] as num).toDouble(),
       estado: data["estado"],
     );
   }
